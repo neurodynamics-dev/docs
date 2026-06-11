@@ -12,7 +12,7 @@ documentos/                 ← repositório PRIVADO
 │   ├── NRO-PUB-001.xlsx                 ← matriz de controle
 │   ├── NRO-PUB-001_metadados.xlsx       ← objetivo / template / relações
 │   └── build_data.py                    ← gera o data.js
-├── catalogo/
+├── docs/
 │   ├── index.html                       ← o site (só metadados)
 │   └── data.js                          ← gerado pelo build
 ├── .github/

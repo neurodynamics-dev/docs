@@ -1,7 +1,7 @@
 name: Atualizar e publicar catálogo
 
-# Regenera o catalogo/data.js a partir das planilhas e publica APENAS a pasta
-# catalogo/ (só metadados) no GitHub Pages. Os arquivos dos setores NÃO são
+# Regenera o docs/data.js a partir das planilhas e publica APENAS a pasta
+# docs/ (só metadados) no GitHub Pages. Os arquivos dos setores NÃO são
 # publicados — permanecem acessíveis somente dentro do repositório (privado).
 
 on:
@@ -9,7 +9,7 @@ on:
     branches: [main]
     paths:
       - 'controle/**'
-      - 'catalogo/**'
+      - 'docs/**'
       - '.github/workflows/build-catalog.yml'
   workflow_dispatch:
 
@@ -46,7 +46,7 @@ jobs:
       - name: Empacotar apenas o catálogo (metadados)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: catalogo
+          path: docs
 
       - id: deployment
         uses: actions/deploy-pages@v4

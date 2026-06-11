@@ -12,7 +12,7 @@ import os, sys, json, datetime, openpyxl
 
 BASE = os.path.dirname(os.path.abspath(__file__))          # .../controle
 REPO = os.path.dirname(BASE)                                # raiz do repo
-OUT  = os.path.join(REPO, "catalogo")
+OUT  = os.path.join(REPO, "docs")
 
 CONTROLE  = sys.argv[1] if len(sys.argv) > 1 else os.path.join(BASE, "NRO-PUB-001.xlsx")
 METADADOS = sys.argv[2] if len(sys.argv) > 2 else os.path.join(BASE, "NRO-PUB-001_metadados.xlsx")
@@ -108,4 +108,16 @@ json.dump(data, open(os.path.join(OUT, "neurodynamics-data.json"), "w"), ensure_
 with open(os.path.join(OUT, "data.js"), "w") as f:
     f.write("// Gerado por build_data.py. Não editar à mão.\n")
     f.write("window.NEURO_DATA = " + json.dumps(data, ensure_ascii=False, indent=2) + ";\n")
-print(f"OK · {len(docs)} documentos · {len(relacoes)} relações · {len(instancias)} séries -> catalogo/data.js")
+
+# injeta os dados embutidos no index.html (para funcionar via duplo-clique e no Pages)
+import re
+idx = os.path.join(OUT, "index.html")
+if os.path.exists(idx):
+    html = open(idx, encoding="utf-8").read()
+    payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    html = re.sub(r'(<script id="nd-data" type="application/json">).*?(</script>)',
+                  lambda m: m.group(1) + payload + m.group(2), html, flags=re.S)
+    open(idx, "w", encoding="utf-8").write(html)
+    print("index.html: dados embutidos")
+
+print(f"OK · {len(docs)} documentos · {len(relacoes)} relações · {len(instancias)} séries -> docs/data.js")

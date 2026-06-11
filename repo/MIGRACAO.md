@@ -52,7 +52,7 @@ Cole o link na linha do código correspondente.
 ```bash
 pip install openpyxl
 python controle/build_data.py
-git add controle/NRO-PUB-001_metadados.xlsx catalogo/data.js
+git add controle/NRO-PUB-001_metadados.xlsx docs/data.js
 git commit -m "Preenche links de arquivo (TEMPLATE)"
 git push
 ```
