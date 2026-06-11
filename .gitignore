@@ -1,0 +1,16 @@
+# NUNCA versionar Confidencial — estes ficam no Drive, com acesso restrito.
+NRO-PES-005*      # Quadro de Pessoal
+NRO-DIR-003*      # Registro de Contas Digitais
+*[Cc]onfidencial*
+*[Cc]redencia*
+
+# Segredos
+.env
+*.key
+*.pem
+
+# Lixo de sistema / Office
+.DS_Store
+Thumbs.db
+~$*
+*.tmp

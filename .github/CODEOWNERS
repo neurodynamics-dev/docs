@@ -1,0 +1,34 @@
+# CODEOWNERS — quem precisa aprovar (review) antes de um merge.
+# Quando um Pull Request toca arquivos de uma pasta, o GitHub solicita
+# automaticamente a revisão do(s) dono(s) listados aqui. Combinado com a
+# regra "Require review from Code Owners" (branch protection), isso vira o
+# mecanismo de aprovação do PLM.
+#
+# A sintaxe usa TIMES da organização (@org/time) OU usuários (@usuario).
+# A ÚLTIMA regra que casar com o caminho é a que vale.
+# -----------------------------------------------------------------------------
+
+# Fallback: qualquer coisa não coberta abaixo exige a diretoria.
+*                       @neurodynamics/diretoria
+
+# Arquivos por setor — cada setor é aprovado pelo seu time.
+/PUB/                   @neurodynamics/mantenedores
+/PES/                   @neurodynamics/aprovadores-pessoas
+/PRO/                   @neurodynamics/aprovadores-projetos
+/CLI/                   @neurodynamics/aprovadores-clinico
+/MKT/                   @neurodynamics/aprovadores-marketing
+/DIR/                   @neurodynamics/diretoria
+
+# Camada de controle e metadados — mudanças aqui afetam todo o catálogo.
+/controle/              @neurodynamics/diretoria @neurodynamics/mantenedores
+
+# O site (catálogo) — só mantenedores mexem.
+/catalogo/              @neurodynamics/mantenedores
+/.github/               @neurodynamics/mantenedores
+
+# -----------------------------------------------------------------------------
+# Conta PESSOAL (sem organização/times)? Times não existem fora de orgs.
+# Troque cada @org/time por usuários, ex.:
+#   /PRO/   @matheusmarcondes @ana-alice
+#   /DIR/   @matheusmarcondes
+# -----------------------------------------------------------------------------
