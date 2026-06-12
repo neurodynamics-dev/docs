@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NeuroDynamics · DOCS</title>
+<link rel="icon" type="image/png" href="assets/favicon.png"/>
+<link rel="apple-touch-icon" href="assets/favicon.png"/>
+<link rel="stylesheet" href="brand.css"/>
+<style>
+  /* ---- app-specific (sobre o brand.css) ---- */
+  main{padding:28px 0;min-height:60vh}
+  .cols{display:grid;gap:22px;grid-template-columns:1fr 400px}
+  @media(max-width:1000px){.cols{grid-template-columns:1fr}}
+  .sticky{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 100px);overflow:auto}
+
+  /* acervo: pastas */
+  .folder{margin-bottom:14px}
+  .fhead{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--panel2);
+    border:1px solid var(--line);padding:10px 14px;color:var(--t1)}
+  .fhead:hover{border-color:var(--line2)}
+  .fhead .fcode{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent)}
+  .fhead .fname{font-weight:600;font-size:13px}
+  .fhead .fmeta{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--t3)}
+  .fbody{border:1px solid var(--line);border-top:0;background:var(--panel)}
+  .pnrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:0;
+    border-bottom:1px solid #1a212e;padding:9px 14px;color:var(--t1)}
+  .pnrow:last-child{border-bottom:0}
+  .pnrow:hover{background:var(--panel2)}
+  .pnrow.sel{background:var(--sel);box-shadow:inset 2px 0 0 var(--accent)}
+  .pnrow .code{width:118px;flex-shrink:0;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--t2)}
+  .pnrow .name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .snrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--inset);border:0;
+    border-bottom:1px solid #161d29;padding:7px 14px 7px 34px;color:var(--t2);font-size:12px}
+  .snrow:hover{background:var(--panel2);color:var(--t1)}
+  .snrow.sel{background:var(--sel);color:var(--t1);box-shadow:inset 2px 0 0 var(--brand)}
+  .snrow .sn{font-family:var(--mono);font-size:11px;color:var(--cyan);width:208px;flex-shrink:0}
+  .snrow .st{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+
+  /* mapa */
+  .lane{margin-bottom:14px}
+  .nodes{display:grid;gap:8px;grid-template-columns:repeat(3,1fr);padding:12px}
+  @media(max-width:620px){.nodes{grid-template-columns:1fr 1fr}}
+  .node{border:1px solid var(--line);background:var(--inset);padding:9px;text-align:left;color:var(--t1)}
+  .node:hover{border-color:var(--line2)}
+  .node.sel{border-color:var(--accent);background:var(--sel)}
+  .node.dim{opacity:.28}
+  .node .nc{display:flex;justify-content:space-between;align-items:center}
+  .node .ncode{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--t3)}
+  .node .nname{font-size:11.5px;margin-top:4px;line-height:1.35;color:var(--t2);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .relgrp{margin-top:14px}
+  .rrow{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:var(--inset);
+    border:1px solid var(--line);padding:7px 9px;margin-top:4px;color:var(--t2);font-size:12px}
+  .rrow:hover{border-color:var(--line2);color:var(--t1)}
+  .rrow .rc{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--t3)}
+
+  /* entrada (wizard) */
+  .wstep{counter-increment:step;margin-bottom:18px}
+  .wstep .whead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .wstep .wnum{width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line2);
+    font-family:var(--mono);font-size:11px;color:var(--accent)}
+  .snpreview{font-family:var(--mono);font-size:15px;color:var(--cyan);letter-spacing:.04em;
+    background:var(--inset);border:1px dashed var(--accent);padding:10px 14px;margin:6px 0 2px}
+  .paper{background:#fff;color:#1d1d1f;font-family:Arial,Helvetica,sans-serif;border:1px solid var(--line);padding:34px 38px;font-size:12.5px;line-height:1.65}
+  .paper .phead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1d1d1f;padding-bottom:10px;margin-bottom:18px}
+  .paper .plogo{height:34px;width:auto}
+  .paper .pcode{text-align:right;font-family:var(--mono);font-size:10.5px;color:#222;line-height:1.5}
+  .paper h2{font-size:15px;margin:0 0 4px}
+  .paper .pmeta{font-size:11px;color:#444;margin-bottom:16px}
+  .paper h3{font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin:16px 0 4px;color:#333}
+  .paper p{margin:4px 0;white-space:pre-wrap}
+  .paper .sig{margin-top:42px;display:flex;gap:40px}
+  .paper .sig div{flex:1;border-top:1px solid #222;padding-top:5px;font-size:10.5px;text-align:center;color:#333}
+  .paper .pfoot{margin-top:26px;border-top:1px solid #c8ccd4;padding-top:8px;font-family:var(--mono);font-size:9px;color:#666;display:flex;justify-content:space-between}
+
+  /* manutenção */
+  .mgrid{display:grid;gap:14px;grid-template-columns:repeat(4,1fr);margin-bottom:20px}
+  @media(max-width:880px){.mgrid{grid-template-columns:1fr 1fr}}
+  .mcard{padding:14px}
+  .mcard .num{font-family:var(--mono);font-size:26px;font-weight:600}
+  .mcard .lbl{font-size:11px;color:var(--t2);margin-top:2px}
+
+  /* print */
+  #printRoot{display:none}
+  @media print{
+    body.nd>*{display:none!important}
+    body.nd{background:#fff!important}
+    #printRoot{display:block!important}
+    #printRoot .paper{border:0;padding:0;background:#fff;color:#000}
+  }
+</style>
+</head>
+<body class="nd">
+<div id="app"></div>
+<div id="printRoot"></div>
+<script id="nd-data" type="application/json">{"_meta": {"fonte_controle": "NRO-PUB-001.xlsx", "gerado": "2026-06-11"}, "setores": {"PUB": {"nome": "Pública", "desc": "Governança do próprio sistema documental."}, "PES": {"nome": "Pessoas", "desc": "Admissão, desligamento, políticas e registros de membros."}, "PRO": {"nome": "Projetos", "desc": "Ciclo de vida técnico: requisitos, design, validação, riscos."}, "CLI": {"nome": "Clínico", "desc": "Departamento clínico."}, "REL": {"nome": "Relações Institucionais", "desc": ""}, "DIR": {"nome": "Diretoria", "desc": "Estatuto, regimento e governança da equipe."}, "MKT": {"nome": "Marketing", "desc": "Comunicação, redes e exposição pública."}}, "projetos": [{"id": "EEGLSL", "nome": "EEG/LSL"}], "documentos": [{"code": "NRO-PUB-001", "setor": "PUB", "nome": "CONTROLE DE DOCUMENTOS E REGISTROS", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "08/03/2026", "revisor": "", "data_rev": "", "objetivo": "Planilha-mestre que registra todo documento e registro da equipe.", "template_url": "https://docs.google.com/spreadsheets/d/1ypj3VOlxW5qKLrWDjYaRjIJGcHclq7hx/edit", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PUB-002", "setor": "PUB", "nome": "TEMPLATE DE DOCUMENTOS E REGISTROS", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "TEMPLATE/MODELO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "07-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Modelo-base de formatação e cabeçalho aplicado a todos os documentos.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PUB-003", "setor": "PUB", "nome": "ATA DE REUNIÃO", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "ATA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "13-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Registro padronizado de reuniões.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-PES-001", "setor": "PES", "nome": "FORMULÁRIO DE ADMISSÃO", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "FORMULÁRIO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "07/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Registro formal de entrada de novo membro.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-PES-002", "setor": "PES", "nome": "FORMULÁRIO DE SOLICITAÇÃO DE AFASTAMENTO TEMPORÁRIO", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "FORMULÁRIO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "07/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Solicitação formal de afastamento temporário.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-PES-003", "setor": "PES", "nome": "FORMULÁRIO DE SOLICITAÇÃO DE DESLIGAMENTO", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "FORMULÁRIO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "07/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Solicitação formal de desligamento.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-PES-004", "setor": "PES", "nome": "MANUAL DO MEMBRO", "status": "INEXISTENTE", "tipo": "DOCUMENTO", "subtipo": "MANUAL/GUIA", "classe": "PÚBLICO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Guia de integração e operação do membro.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-005", "setor": "PES", "nome": "QUADRO DE PESSOAL", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "CONFIDENCIAL", "autor": "MMARCONDES", "data_autor": "07/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Registro confidencial do quadro de membros.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-006", "setor": "PES", "nome": "PROCEDIMENTO DE ADMISSÃO", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "PROCEDIMENTO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "08/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Procedimento que rege a admissão de membros.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-007", "setor": "PES", "nome": "PROCEDIMENTO DE DESLIGAMENTO", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "PROCEDIMENTO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "08/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Procedimento que rege o desligamento de membros.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-008", "setor": "PES", "nome": "FORMULÁRIO DE REQUISIÇÃO DE ACESSO", "status": "RASCUNHO", "tipo": "REGISTRO", "subtipo": "FORMULÁRIO", "classe": "PÚBLICO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Pedido de concessão de acesso a recursos.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-009", "setor": "PES", "nome": "POLÍTICA DE EMAIL INSTITUCIONAL", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "POLÍTICA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "13/03/2026", "revisor": "", "data_rev": "", "objetivo": "Regras de uso do email institucional.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-010", "setor": "PES", "nome": "RELATORIO DE VIAGEM", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "18/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Registro de viagem realizada.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-PES-011", "setor": "PES", "nome": "DESPESAS DE VIAGEM", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "18/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Controle de despesas de viagem.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-PES-012", "setor": "PES", "nome": "POLÍTICA DE COPARTICIPAÇÃO EM ATIVIDADES DA VIDA ACADÊMICA", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "POLÍTICA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "24/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Política de conciliação com a vida acadêmica.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-013", "setor": "PES", "nome": "POLÍTICA DE PROGRESSÃO FUNCIONAL", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "POLÍTICA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "24/03/2026", "revisor": "ANA ALICE GOMES", "data_rev": "28/03/2026", "objetivo": "Critérios de progressão funcional de membros.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-014", "setor": "PES", "nome": "CHECKLIST DE ORGANIZAÇÃO DE REUNIÃO GERAL", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "LISTA/CHECKLIST", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "06-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Checklist de organização de reunião geral.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-015", "setor": "PES", "nome": "POLÍTICA DE ACESSO AO LABBIO", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "POLÍTICA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "15-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Regras de acesso ao laboratório (LabBio).", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-016", "setor": "PES", "nome": "FORMULÁRIO DE SUBMISSÃO DO TERMO DE SIGILO DO LABBIO", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "FORMULÁRIO", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "16-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Termo de sigilo exigido para acesso ao LabBio.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-PES-017", "setor": "PES", "nome": "GUIA DE CONTROLE DE ACESSO À INFORMAÇÃO", "status": "RASCUNHO", "tipo": "DOCUMENTO", "subtipo": "MANUAL/GUIA", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Guia que define classes de acesso e grupos de usuários.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PES-018", "setor": "PES", "nome": "GUIA DE COMPARTILHAMENTO DE CALENDÁRIO", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "MANUAL/GUIA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "11-MAI-26", "revisor": "", "data_rev": "", "objetivo": "Guia de uso do calendário compartilhado.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-001", "setor": "PRO", "nome": "TERMO DE ABERTURA DE PROJETO", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Formaliza a abertura de um projeto.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "PROJETO"}, {"code": "NRO-PRO-002", "setor": "PRO", "nome": "MANUAL DE INSPEÇÃO DE HARDWARE", "status": "RASCUNHO", "tipo": "DOCUMENTO", "subtipo": "MANUAL/GUIA", "classe": "PÚBLICO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Procedimento de inspeção de hardware.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-003", "setor": "PRO", "nome": "RELATÓRIO DE EXECUÇÃO DE TESTES", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "MMARCONDES", "data_autor": "13-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Registro dos resultados de testes executados.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "PROJETO"}, {"code": "NRO-PRO-004", "setor": "PRO", "nome": "(USRS) USER AND SYSTEM REQUIREMENTS SPECIFICATION", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "CONTROLADO", "autor": "MMARCONDES", "data_autor": "04/06/2026", "revisor": "", "data_rev": "", "objetivo": "Especificação de requisitos de usuário e de sistema (USRS).", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-005", "setor": "PRO", "nome": "PLANO DE VALIDAÇÃO", "status": "INEXISTENTE", "tipo": "DOCUMENTO", "subtipo": "MANUAL/GUIA", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Plano de verificação e validação do produto.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-006", "setor": "PRO", "nome": "MATRIZ DE GERENCIAMENTO DE RISCOS", "status": "RASCUNHO", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Identificação e mitigação de riscos (estilo ISO 14971).", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-007", "setor": "PRO", "nome": "PORTFÓLIO", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "CONTROLADO", "autor": "MMARCONDES", "data_autor": "27-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Visão consolidada de todos os projetos.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-008", "setor": "PRO", "nome": "RELATÓRIO TÉCNICO PARCIAL", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Relatório de andamento técnico parcial.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "PROJETO"}, {"code": "NRO-PRO-009", "setor": "PRO", "nome": "(DHF) DESIGN HISTORY FILE", "status": "RASCUNHO", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "MMARCONDES", "data_autor": "17-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Dossiê que agrega todo o histórico de design (DHF).", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-010", "setor": "PRO", "nome": "(DMF) DESIGN MASTER FILE", "status": "INEXISTENTE", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Arquivo-mestre do produto liberado (DMF).", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-011", "setor": "PRO", "nome": "MATRIZ DE RASTREABILIDADE DE REQUISITOS", "status": "INEXISTENTE", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Liga requisitos a testes e verificações (rastreabilidade).", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-012", "setor": "PRO", "nome": "INTERFACE SPECIFICATION CONTROL", "status": "RASCUNHO", "tipo": "DOCUMENTO", "subtipo": "PLANILHA", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Controle das especificações de interface.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-PRO-013", "setor": "PRO", "nome": "ARCHITECTURE DECISION RECORD", "status": "RASCUNHO", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Registro de decisões de arquitetura (ADR).", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "PROJETO"}, {"code": "NRO-PRO-014", "setor": "PRO", "nome": "DESIGN RECORD", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "MMARCONDES", "data_autor": "15-MAI-26", "revisor": "", "data_rev": "", "objetivo": "Registro de design do produto.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-DIR-001", "setor": "DIR", "nome": "ESTATUTO", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "OUTROS", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "24/03/2026", "revisor": "", "data_rev": "", "objetivo": "Documento fundador da equipe.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-DIR-002", "setor": "DIR", "nome": "REGIMENTO INTERNO", "status": "INEXISTENTE", "tipo": "DOCUMENTO", "subtipo": "OUTROS", "classe": "PÚBLICO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Regras internas detalhadas, derivadas do estatuto.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-DIR-003", "setor": "DIR", "nome": "REGISTRO DE CONTAS DIGITAIS", "status": "INEXISTENTE", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "CONFIDENCIAL", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Registro confidencial de contas e credenciais.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-DIR-004", "setor": "DIR", "nome": "DECLARAÇÃO DE MEMBRO", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "DECLARAÇÃO", "classe": "CONTROLADO", "autor": "MAMRCONDES", "data_autor": "06-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Declaração formal de vínculo do membro.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-DIR-005", "setor": "DIR", "nome": "CÓDIGO DE CONDUTA", "status": "INEXISTENTE", "tipo": "DOCUMENTO", "subtipo": "POLÍTICA", "classe": "PÚBLICO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Princípios de conduta da equipe.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-MKT-001", "setor": "MKT", "nome": "POLÍTICA DE REDES SOCIAIS", "status": "EM VIGÊNCIA", "tipo": "DOCUMENTO", "subtipo": "POLÍTICA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "18/03/2026", "revisor": "", "data_rev": "", "objetivo": "Diretrizes de presença em redes sociais.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-MKT-002", "setor": "MKT", "nome": "INFORMAÇÕES PÚBLICAS DE PROJETOS", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "PÚBLICO", "autor": "MMARCONDES", "data_autor": "01-Abr-26", "revisor": "", "data_rev": "", "objetivo": "Versão pública das informações de projetos.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-MKT-003", "setor": "MKT", "nome": "REGISTRO DE EXPOSIÇÕES PÚBLICAS DA EQUIPE", "status": "RASCUNHO", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "PÚBLICO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Registro de aparições públicas da equipe.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}, {"code": "NRO-MKT-004", "setor": "MKT", "nome": "BRIEFING DE CAMPANHA", "status": "EM VIGÊNCIA", "tipo": "REGISTRO", "subtipo": "RELATÓRIO", "classe": "CONTROLADO", "autor": "MMARCONDES", "data_autor": "16-ABR-26", "revisor": "", "data_rev": "", "objetivo": "Briefing de campanhas de comunicação.", "template_url": "", "projeto": "", "seriado": true, "escopo_serie": "DEPARTAMENTO"}, {"code": "NRO-MKT-005", "setor": "MKT", "nome": "IDEIAS DE PUBLICAÇÕES", "status": "RASCUNHO", "tipo": "REGISTRO", "subtipo": "PLANILHA", "classe": "PÚBLICO", "autor": "", "data_autor": "", "revisor": "", "data_rev": "", "objetivo": "Backlog de ideias de conteúdo.", "template_url": "", "projeto": "", "seriado": false, "escopo_serie": ""}], "relacoes": [{"de": "NRO-PRO-004", "tipo": "ALIMENTA", "para": "NRO-PRO-011", "nota": "Requisitos alimentam a matriz de rastreabilidade"}, {"de": "NRO-PRO-004", "tipo": "ALIMENTA", "para": "NRO-PRO-014", "nota": "Requisitos guiam o design"}, {"de": "NRO-PRO-004", "tipo": "ALIMENTA", "para": "NRO-PRO-005", "nota": "Requisitos definem o plano de validação"}, {"de": "NRO-PRO-004", "tipo": "ALIMENTA", "para": "NRO-PRO-012", "nota": "Requisitos definem as interfaces"}, {"de": "NRO-PRO-004", "tipo": "ALIMENTA", "para": "NRO-PRO-009", "nota": ""}, {"de": "NRO-PRO-005", "tipo": "ALIMENTA", "para": "NRO-PRO-003", "nota": "Plano define os testes a executar"}, {"de": "NRO-PRO-003", "tipo": "ALIMENTA", "para": "NRO-PRO-011", "nota": "Resultados preenchem a verificação na matriz"}, {"de": "NRO-PRO-003", "tipo": "ALIMENTA", "para": "NRO-PRO-009", "nota": ""}, {"de": "NRO-PRO-006", "tipo": "ALIMENTA", "para": "NRO-PRO-009", "nota": "Riscos compõem o DHF"}, {"de": "NRO-PRO-013", "tipo": "ALIMENTA", "para": "NRO-PRO-014", "nota": "Decisões de arquitetura embasam o design"}, {"de": "NRO-PRO-014", "tipo": "ALIMENTA", "para": "NRO-PRO-009", "nota": ""}, {"de": "NRO-PRO-005", "tipo": "ALIMENTA", "para": "NRO-PRO-009", "nota": ""}, {"de": "NRO-PRO-009", "tipo": "ALIMENTA", "para": "NRO-PRO-010", "nota": "DHF consolida-se no DMF na liberação"}, {"de": "NRO-PRO-001", "tipo": "ALIMENTA", "para": "NRO-PRO-007", "nota": "Abertura entra no portfólio"}, {"de": "NRO-PES-006", "tipo": "ALIMENTA", "para": "NRO-PES-001", "nota": "Procedimento define o formulário"}, {"de": "NRO-PES-007", "tipo": "ALIMENTA", "para": "NRO-PES-003", "nota": "Procedimento define o formulário"}, {"de": "NRO-PES-001", "tipo": "ALIMENTA", "para": "NRO-PES-005", "nota": "Admissão atualiza o quadro de pessoal"}, {"de": "NRO-PES-003", "tipo": "ALIMENTA", "para": "NRO-PES-005", "nota": "Desligamento atualiza o quadro de pessoal"}, {"de": "NRO-PES-015", "tipo": "ALIMENTA", "para": "NRO-PES-016", "nota": "Política exige o termo de sigilo"}, {"de": "NRO-PES-017", "tipo": "ALIMENTA", "para": "NRO-PES-008", "nota": "Guia define o fluxo de requisição de acesso"}, {"de": "NRO-DIR-001", "tipo": "ALIMENTA", "para": "NRO-DIR-002", "nota": "Estatuto embasa o regimento"}, {"de": "NRO-DIR-001", "tipo": "ALIMENTA", "para": "NRO-DIR-005", "nota": "Estatuto embasa o código de conduta"}, {"de": "NRO-PRO-007", "tipo": "ALIMENTA", "para": "NRO-MKT-002", "nota": "Portfólio gera a versão pública (inter-setor)"}, {"de": "NRO-MKT-004", "tipo": "ALIMENTA", "para": "NRO-MKT-005", "nota": "Briefing orienta as ideias de publicação"}, {"de": "NRO-PES-010", "tipo": "REFERENCIA", "para": "NRO-PES-011", "nota": "Relatório e despesas de viagem andam juntos"}, {"de": "NRO-PUB-003", "tipo": "REFERENCIA", "para": "NRO-PES-014", "nota": "Ata e checklist de reunião"}, {"de": "NRO-PRO-002", "tipo": "REFERENCIA", "para": "NRO-PRO-003", "nota": "Inspeção de hardware referencia execução de testes"}], "instancias": [{"sn": "NRO-PUB-003-DIR-001", "pn": "NRO-PUB-003", "escopo": "DIR", "numero": 1, "titulo": "Reunião de diretoria", "data": "14/04/2026", "autor": "MMARCONDES", "status": "EMITIDO", "arquivo": "", "nota": "EXEMPLO — substituir"}, {"sn": "NRO-PUB-003-DIR-002", "pn": "NRO-PUB-003", "escopo": "DIR", "numero": 2, "titulo": "Planejamento trimestral", "data": "12/05/2026", "autor": "MMARCONDES", "status": "EMITIDO", "arquivo": "", "nota": "EXEMPLO — substituir"}, {"sn": "NRO-PUB-003-PES-001", "pn": "NRO-PUB-003", "escopo": "PES", "numero": 1, "titulo": "Reunião geral de membros", "data": "20/05/2026", "autor": "ANA ALICE GOMES", "status": "EMITIDO", "arquivo": "", "nota": "EXEMPLO — substituir"}, {"sn": "NRO-DIR-004-DIR-001", "pn": "NRO-DIR-004", "escopo": "DIR", "numero": 1, "titulo": "Declaração de membro", "data": "06/04/2026", "autor": "MMARCONDES", "status": "EMITIDO", "arquivo": "", "nota": "EXEMPLO — substituir"}, {"sn": "NRO-PRO-003-EEGLSL-001", "pn": "NRO-PRO-003", "escopo": "EEGLSL", "numero": 1, "titulo": "Execução de testes — aquisição EEG", "data": "13/04/2026", "autor": "MMARCONDES", "status": "EMITIDO", "arquivo": "", "nota": "EXEMPLO — substituir"}, {"sn": "NRO-PRO-008-EEGLSL-001", "pn": "NRO-PRO-008", "escopo": "EEGLSL", "numero": 1, "titulo": "Relatório técnico parcial — EEG/LSL", "data": "27/04/2026", "autor": "MMARCONDES", "status": "RASCUNHO", "arquivo": "", "nota": "EXEMPLO — substituir"}]}</script>
+<script>
+(function(){
+let DATA=null;
+try{DATA=JSON.parse(document.getElementById('nd-data').textContent)}catch(e){DATA=window.NEURO_DATA||null}
+if(!DATA||!DATA.documentos){document.getElementById('app').innerHTML='<div style="padding:60px;text-align:center;color:#9aa7bd">Dados não encontrados. Rode <code>python controle/build_data.py</code> para gerar o catálogo.</div>';return}
+const DOCS=DATA.documentos,REL=DATA.relacoes,SET=DATA.setores,PROJ=DATA.projetos||[],INST=DATA.instancias||[];
+const byCode=Object.fromEntries(DOCS.map(d=>[d.code,d]));
+const setorOf=c=>c.split('-')[1];
+const SECTORS=Object.keys(SET);
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const pad3=n=>String(n).padStart(3,'0');
+const escopoNome=e=>SET[e]?SET[e].nome:(PROJ.find(p=>p.id===e)||{}).nome||e;
+const DEPT={PES:'Departamento de Pessoal',REL:'Departamento de Relações Institucionais',MKT:'Departamento de Marketing',PRO:'Departamento de Pesquisa e Desenvolvimento',CLI:'Departamento Clínico',DIR:'Diretoria',PUB:'Diretoria'};
+const deptOf=e=>DEPT[e]||'Departamento de Pesquisa e Desenvolvimento';
+
+/* ---- ícones ---- */
+const P={layers:'m12 2 9 5-9 5-9-5 9-5Z M3 12l9 5 9-5M3 17l9 5 9-5',folder:'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z',file:'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z M14 2v6h6',plus:'M12 5v14M5 12h14',wrench:'M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7Z',lock:'M4 11h16v10H4Z M8 11V7a4 4 0 0 1 8 0v4',shield:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z',eye:'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',up:'M12 19V6M5 12l7-7 7 7',check:'M20 6 9 17l-5-5',x:'M18 6 6 18M6 6l12 12',search:'M18 18a7 7 0 1 0-14 0M21 21l-4.3-4.3 M18 11a7 7 0 1 0-14 0 7 7 0 0 0 14 0Z',net:'M12 3v6m0 6v6M5.6 7.5 9 9m6 6 3.4 1.5M18.4 7.5 15 9m-6 6-3.4 1.5',print:'M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6Z',copy:'M8 8h12v12H8Z M16 8V4H4v12h4'};
+const ic=(k,s)=>`<svg width="${s||15}" height="${s||15}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${P[k]}"/></svg>`;
+
+/* ---- tokens de estado ---- */
+const SDOT={'EM VIGÊNCIA':'var(--ok)','RASCUNHO':'var(--warn)','INEXISTENTE':'var(--t3)','EMITIDO':'var(--ok)','CANCELADO':'var(--danger)'};
+const stChip=s=>`<span class="nd-chip ${s==='EM VIGÊNCIA'||s==='EMITIDO'?'ok':s==='RASCUNHO'?'warn':s==='CANCELADO'?'danger':''}">${esc(s)}</span>`;
+const clChip=c=>`<span class="nd-chip ${c==='CONTROLADO'?'accent':c==='CONFIDENCIAL'?'danger':''}">${c==='CONFIDENCIAL'?ic('lock',10):c==='CONTROLADO'?ic('shield',10):''}${esc(c)}</span>`;
+
+/* ---- grupos ---- */
+const GRUPOS={visitante:{nome:'Visitante',clear:['PÚBLICO'],submeter:false,aprovar:false,soVigente:true},
+membro:{nome:'Membro',clear:['PÚBLICO','CONTROLADO'],submeter:true,aprovar:false,soVigente:false},
+revisor:{nome:'Revisor',clear:['PÚBLICO','CONTROLADO'],submeter:true,aprovar:false,soVigente:false},
+aprovador:{nome:'Aprovador / Diretoria',clear:['PÚBLICO','CONTROLADO','CONFIDENCIAL'],submeter:true,aprovar:true,soVigente:false},
+_sistema:{nome:'Sistema',clear:['PÚBLICO','CONTROLADO','CONFIDENCIAL'],submeter:true,aprovar:true,soVigente:false}};
+const podeVer=(d,g)=>g.clear.includes(d.classe)&&(!g.soVigente||d.status==='EM VIGÊNCIA');
+
+/* ---- séries ---- */
+const instOf=pn=>INST.filter(i=>i.pn===pn).sort((a,b)=>(a.escopo+pad3(a.numero)).localeCompare(b.escopo+pad3(b.numero)));
+const nextNum=(pn,escopo)=>INST.filter(i=>i.pn===pn&&i.escopo===escopo).reduce((m,i)=>Math.max(m,+i.numero||0),0)+1;
+const KIND={'NRO-PUB-003':'ata','NRO-DIR-004':'declaracao','NRO-PRO-008':'relatorio','NRO-PRO-003':'relatorio','NRO-PES-010':'relatorio'};
+
+/* ---- estado ---- */
+const st={tab:'acervo',role:'_sistema',sel:null,selSN:null,q:'',open:{},
+  w:{pn:'',escopo:'',campos:{}}};
+const $=s=>document.querySelector(s);
+
+/* ===================== SHELL ===================== */
+function shell(){
+document.getElementById('app').innerHTML=`
+<header class="nd-header"><div class="nd-wrap bar">
+  <a class="nd-logo" href="#" data-go="acervo"><img class="nd-logo-img" src="assets/imagotipo-preto.png" alt="NeuroDynamics"></a>
+  <span class="nd-env">DOCS · UFMG</span>
+  <nav class="nd-nav">
+    <button class="tab" data-t="acervo">${ic('folder',14)} Acervo</button>
+    <button class="tab" data-t="mapa">${ic('layers',14)} Mapa</button>
+    <button class="tab" data-t="entrada">${ic('plus',14)} Nova entrada</button>
+    <button class="tab" data-t="manut">${ic('wrench',14)} Manutenção</button>
+  </nav>
+</div></header>
+<main class="nd-wrap"><div id="view"></div></main>
+<footer class="nd-footer"><div class="nd-wrap">
+  <div class="grid">
+    <div><div class="wordmark">NeuroDynamics</div>
+      <div class="nd-micro" style="margin:3px 0 10px;color:var(--brand)">Document Control</div>
+      <p>Plataforma de gestão do ciclo de vida documental da equipe de neurotecnologia (UFMG).
+      Estrutura inspirada em sistemas de qualidade para dispositivos médicos.</p></div>
+    <div><h5>Módulos</h5><ul>
+      <li><a href="#" data-go="acervo">Acervo de documentos</a></li>
+      <li><a href="#" data-go="mapa">Mapa de rastreabilidade</a></li>
+      <li><a href="#" data-go="entrada">Entrada de série (SN)</a></li>
+      <li><a href="#" data-go="manut">Manutenção do acervo</a></li></ul></div>
+    <div><h5>Governança</h5><ul>
+      <li>Matriz de controle: <span class="mono">NRO-PUB-001</span></li>
+      <li>Aprovação via Pull Request</li>
+      <li>Donos por setor: CODEOWNERS</li>
+      <li>Confidencial permanece no Drive</li></ul></div>
+    <div><h5>Identificação</h5><ul>
+      <li>PN = código do documento</li>
+      <li>SN = <span class="mono">PN-ESCOPO-NNN</span></li>
+      <li>Revisões: Rev. A–P (Git)</li>
+      <li>Classes: Público · Controlado · Confidencial</li></ul></div>
+  </div>
+  <div class="strip"><span>NeuroDynamics · DOCS</span><span>BUILD ${esc(DATA._meta.gerado)}</span>
+    <span>${DOCS.length} PN · ${INST.length} SN · ${REL.length} RELAÇÕES</span>
+    <span class="cls">CLASSIFICAÇÃO: METADADOS DE USO INTERNO</span></div>
+</div></footer>`;
+document.querySelectorAll('.nd-nav .tab').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.sel=null;st.selSN=null;view()});
+document.querySelectorAll('[data-go]').forEach(a=>a.onclick=e=>{e.preventDefault();st.tab=a.dataset.go;view();scrollTo({top:0})});
+view();
+}
+function view(){document.querySelectorAll('.nd-nav .tab').forEach(b=>b.classList.toggle('active',b.dataset.t===st.tab));
+({acervo:renderAcervo,mapa:renderMapa,entrada:renderEntrada,manut:renderManut})[st.tab]();}
+
+/* ===================== ACERVO ===================== */
+function renderAcervo(){
+$('#view').innerHTML=`<div class="cols"><div>
+  <h1 class="nd-h1">Acervo de documentos</h1>
+  <p class="nd-sub">Diretório por setor. Documentos de <b>versão única</b> aparecem como item simples;
+  documentos <b>seriados</b> (atas, declarações, relatórios…) abrem como pasta com suas edições — cada uma com escopo
+  (departamento ou projeto) e número de série.</p>
+  <div class="tools">
+    <div style="flex:1;display:flex;align-items:center;gap:8px" class="nd-input">
+      ${ic('search',14)}<input id="q" style="flex:1;background:none;border:0;outline:none;color:var(--t1);font-size:13px" placeholder="Buscar PN, SN, nome, pessoa, projeto…" value="${esc(st.q)}">
+    </div>
+    <button class="nd-btn primary" id="goNew">${ic('plus',13)} Nova entrada</button>
+  </div>
+  <div id="folders"></div>
+</div><aside class="sticky"><div id="adetail"></div></aside></div>`;
+$('#q').oninput=e=>{st.q=e.target.value;renderFolders()};
+$('#goNew').onclick=()=>{st.tab='entrada';view()};
+renderFolders();renderADetail();
+}
+function matches(d,term){return [d.code,d.nome,d.autor,d.revisor,d.subtipo,d.projeto].filter(Boolean).join(' ').toLowerCase().includes(term)}
+function matchesSN(i,term){return [i.sn,i.titulo,i.autor,escopoNome(i.escopo)].filter(Boolean).join(' ').toLowerCase().includes(term)}
+function renderFolders(){
+const term=st.q.trim().toLowerCase(),g=GRUPOS[st.role];
+$('#folders').innerHTML=SECTORS.map(s=>{
+  let docs=DOCS.filter(d=>setorOf(d.code)===s);
+  if(term)docs=docs.filter(d=>matches(d,term)||instOf(d.code).some(i=>matchesSN(i,term)));
+  if(!docs.length&&term)return '';
+  const open=st.open[s]!==false;
+  const body=!docs.length?`<div style="padding:14px;color:var(--t3);font-size:12px">Sem documentos cadastrados</div>`
+    :docs.map(d=>{
+      const series=instOf(d.code);
+      const showSN=d.seriado&&(open||term)&&(st.open['pn:'+d.code]||term&&series.some(i=>matchesSN(i,term)));
+      return `<button class="pnrow ${st.sel===d.code&&!st.selSN?'sel':''}" data-pn="${d.code}">
+        <span class="nd-dot" style="background:${SDOT[d.status]||'var(--t3)'}" title="${esc(d.status)}"></span>
+        <span class="code">${d.code}</span><span class="name">${esc(d.nome)}</span>
+        ${d.seriado?`<span class="nd-chip violet">${ic('folder',10)} SÉRIE · ${series.length}</span>`:`<span class="nd-chip">DOC ÚNICO</span>`}
+        ${clChip(d.classe)}
+        ${podeVer(d,g)?'':`<span style="color:var(--danger)">${ic('lock',12)}</span>`}
+      </button>`+
+      (showSN?series.filter(i=>!term||matchesSN(i,term)||matches(d,term)).map(i=>`
+        <button class="snrow ${st.selSN===i.sn?'sel':''}" data-sn="${i.sn}">
+          <span class="sn">${i.sn}</span>
+          <span class="nd-chip">${esc(escopoNome(i.escopo))}</span>
+          <span class="nd-chip">Nº ${pad3(i.numero)}</span>
+          <span class="st">${esc(i.titulo)}</span>
+          <span class="nd-dot" style="background:${SDOT[i.status]||'var(--t3)'}"></span>
+        </button>`).join(''):'');
+    }).join('');
+  return `<div class="folder">
+    <button class="fhead" data-s="${s}">${ic('folder',14)}
+      <span class="fcode">NRO-${s}</span><span class="fname">${esc(SET[s].nome)}</span>
+      <span class="fmeta">${docs.length} PN · ${docs.reduce((a,d)=>a+instOf(d.code).length,0)} SN ${open?'▾':'▸'}</span></button>
+    ${open?`<div class="fbody">${body}</div>`:''}
+  </div>`;
+}).join('')||`<div style="padding:30px;text-align:center;color:var(--t3)">Nada encontrado.</div>`;
+document.querySelectorAll('.fhead').forEach(b=>b.onclick=()=>{st.open[b.dataset.s]=st.open[b.dataset.s]===false;renderFolders()});
+document.querySelectorAll('.pnrow').forEach(b=>b.onclick=()=>{const pn=b.dataset.pn;
+  if(byCode[pn].seriado)st.open['pn:'+pn]=!st.open['pn:'+pn];
+  st.sel=pn;st.selSN=null;renderFolders();renderADetail()});
+document.querySelectorAll('.snrow').forEach(b=>b.onclick=ev=>{ev.stopPropagation();st.selSN=b.dataset.sn;st.sel=INST.find(i=>i.sn===b.dataset.sn).pn;renderFolders();renderADetail()});
+}
+function renderADetail(){
+const box=$('#adetail');if(!box)return;
+const g=GRUPOS[st.role];
+if(st.selSN){const i=INST.find(x=>x.sn===st.selSN),d=byCode[i.pn];
+  box.innerHTML=`<div class="nd-card pad">
+    <span class="nd-micro">Edição de série</span>
+    <div class="mono" style="font-size:15px;color:var(--cyan);margin:4px 0">${i.sn}</div>
+    <h2 style="font-size:15px;margin:0 0 10px">${esc(i.titulo)}</h2>
+    <div class="tools">${stChip(i.status)}<span class="nd-chip">${esc(escopoNome(i.escopo))}</span><span class="nd-chip">Nº ${pad3(i.numero)}</span></div>
+    <dl class="nd-kv" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0">
+      <div><dt>Tipo (PN)</dt><dd class="mono">${i.pn}</dd></div>
+      <div><dt>Documento-mãe</dt><dd>${esc(d.nome)}</dd></div>
+      <div><dt>Data</dt><dd>${esc(i.data||'—')}</dd></div>
+      <div><dt>Autor</dt><dd>${esc(i.autor||'—')}</dd></div>
+    </dl>
+    ${i.arquivo?`<a class="nd-btn block" target="_blank" rel="noopener" href="${esc(i.arquivo)}">${ic('eye',14)} Abrir arquivo</a>`
+      :`<button class="nd-btn block" disabled>${ic('eye',14)} Arquivo não vinculado</button>`}
+    ${i.nota?`<p style="font-size:11px;color:var(--warn);margin-top:10px">${esc(i.nota)}</p>`:''}
+  </div>`;return}
+if(!st.sel){box.innerHTML=`<div class="nd-card pad" style="text-align:center;color:var(--t3);padding:40px 20px">${ic('folder',26)}<p style="font-size:12.5px">Selecione um documento (PN) ou uma edição (SN).</p></div>`;return}
+const d=byCode[st.sel];
+if(!podeVer(d,g)){box.innerHTML=`<div class="nd-card pad" style="border-color:#7f1d1d">
+  <span style="color:var(--danger)">${ic('lock',22)}</span>
+  <div class="mono" style="margin-top:6px;font-size:12px;color:var(--danger)">${d.code}</div>
+  <h2 style="font-size:15px;margin:4px 0">${esc(d.nome)}</h2>
+  <p style="font-size:12.5px;color:var(--t2)">Classe <b>${esc(d.classe)}</b> indisponível para o grupo <b>${esc(g.nome)}</b>.</p></div>`;return}
+const series=instOf(d.code);
+const revs=[];if(d.autor)revs.push(`Rev. A — ${d.data_autor||''} · ${d.autor}`);if(d.revisor)revs.push(`Rev. B — ${d.data_rev||''} · ${d.revisor}`);
+box.innerHTML=`<div class="nd-card pad">
+  <span class="nd-micro">${d.seriado?'Documento seriado (PN)':'Documento de versão única'}</span>
+  <div class="mono" style="font-size:13px;color:var(--accent);margin:4px 0">${d.code}</div>
+  <h2 style="font-size:15px;margin:0 0 10px">${esc(d.nome)}</h2>
+  <div class="tools">${stChip(d.status)}${clChip(d.classe)}<span class="nd-chip">${esc(d.subtipo)}</span>${d.seriado?`<span class="nd-chip violet">ESCOPO: ${esc(d.escopo_serie||'—')}</span>`:''}</div>
+  <p style="font-size:12.5px;color:var(--t2)">${esc(d.objetivo)}</p>
+  ${d.template_url?`<a class="nd-btn block" target="_blank" rel="noopener" href="${esc(d.template_url)}">${ic('file',14)} ${d.seriado?'Abrir modelo (template)':'Abrir / baixar versão atual'}</a>`
+    :`<button class="nd-btn block" disabled>${ic('file',14)} Link pendente</button>`}
+  ${d.seriado?`<button class="nd-btn primary block" id="newFromPN" style="margin-top:8px" ${g.submeter?'':'disabled'}>${ic('plus',13)} Dar entrada em nova edição</button>`:''}
+  <div style="display:grid;gap:8px;margin-top:8px">
+    <button class="nd-btn block" ${g.submeter?'':'disabled'}>${ic('up',13)} Submeter nova versão (PR)</button>
+    <button class="nd-btn block" ${g.aprovar?'':'disabled'}>${ic('check',13)} Aprovar e publicar (merge)</button>
+  </div>
+  ${d.seriado?`<h4 class="nd-micro" style="margin:18px 0 6px">Edições registradas (${series.length})</h4>
+    ${series.length?`<table class="nd-table"><tr><th>SN</th><th>Escopo</th><th>Título</th></tr>
+    ${series.map(i=>`<tr><td class="mono" style="color:var(--cyan);font-size:11px">…${i.escopo}-${pad3(i.numero)}</td><td>${esc(escopoNome(i.escopo))}</td><td>${esc(i.titulo)}</td></tr>`).join('')}</table>`
+    :`<p style="font-size:12px;color:var(--t3)">Nenhuma edição ainda.</p>`}`:''}
+  <h4 class="nd-micro" style="margin:18px 0 6px">Revisões do modelo</h4>
+  ${revs.length?revs.map(r=>`<div class="mono" style="font-size:11px;color:var(--t2);padding:3px 0">${esc(r)}</div>`).join(''):`<p style="font-size:12px;color:var(--t3)">Sem revisões registradas.</p>`}
+</div>`;
+const nb=$('#newFromPN');if(nb)nb.onclick=()=>{st.w={pn:d.code,escopo:'',campos:{}};st.tab='entrada';view()};
+}
+
+/* ===================== MAPA ===================== */
+function relacoesDe(code){return{
+  alimenta:REL.filter(e=>e.de===code&&e.tipo==='ALIMENTA').map(e=>e.para),
+  deriva:REL.filter(e=>e.para===code&&e.tipo==='ALIMENTA').map(e=>e.de),
+  ref:REL.filter(e=>e.tipo==='REFERENCIA'&&(e.de===code||e.para===code)).map(e=>e.de===code?e.para:e.de)}}
+function conectados(code){const s=new Set([code]);REL.forEach(e=>{if(e.de===code)s.add(e.para);if(e.para===code)s.add(e.de)});return s}
+function renderMapa(){
+$('#view').innerHTML=`<div class="cols"><div>
+  <h1 class="nd-h1">Mapa de rastreabilidade</h1>
+  <p class="nd-sub">Como os tipos de documento se amarram: <b style="color:var(--accent)">alimenta</b> ·
+  <b style="color:var(--cyan)">deriva de</b> · <b style="color:var(--t3)">referencia</b>. Clique para focar.</p>
+  <div id="lanes"></div></div>
+  <aside class="sticky"><div id="mdetail"></div></aside></div>`;
+renderLanes();renderMDetail();
+}
+function renderLanes(){
+const conn=st.sel?conectados(st.sel):null;
+$('#lanes').innerHTML=SECTORS.map(s=>{
+  const docs=DOCS.filter(d=>setorOf(d.code)===s);
+  return `<div class="nd-card lane"><div style="display:flex;gap:10px;align-items:baseline;padding:10px 14px;border-bottom:1px solid var(--line)">
+    <span class="mono" style="font-size:11px;color:var(--accent);font-weight:600">NRO-${s}</span>
+    <span style="font-weight:600;font-size:13px">${esc(SET[s].nome)}</span>
+    <span style="font-size:11px;color:var(--t3)">${esc(SET[s].desc||'')}</span></div>
+    ${docs.length?`<div class="nodes">${docs.map(d=>{
+      const dim=conn&&!conn.has(d.code);
+      return `<button class="node ${st.sel===d.code?'sel':''} ${dim?'dim':''}" data-c="${d.code}">
+        <div class="nc"><span class="ncode">${d.code}</span><span class="nd-dot" style="background:${SDOT[d.status]||'var(--t3)'}"></span></div>
+        <div class="nname">${esc(d.nome)}</div></button>`}).join('')}</div>`
+    :`<div style="padding:14px;color:var(--t3);font-size:12px">Sem documentos cadastrados</div>`}</div>`;
+}).join('');
+document.querySelectorAll('.node').forEach(n=>n.onclick=()=>{st.sel=n.dataset.c;renderLanes();renderMDetail()});
+}
+function relGroup(t,color,codes){if(!codes.length)return'';
+return `<div class="relgrp"><h4 class="nd-micro" style="margin:0 0 4px"><span class="nd-dot" style="display:inline-block;background:${color};margin-right:5px"></span>${t}</h4>`+
+codes.map(c=>{const d=byCode[c];return d?`<button class="rrow" data-c="${c}"><span class="rc">${c}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.nome)}</span></button>`:''}).join('')+`</div>`}
+function renderMDetail(){
+const box=$('#mdetail');if(!box)return;
+if(!st.sel){box.innerHTML=`<div class="nd-card pad" style="text-align:center;color:var(--t3);padding:40px 20px">${ic('layers',26)}<p style="font-size:12.5px">Selecione um documento.</p></div>`;return}
+const d=byCode[st.sel],r=relacoesDe(st.sel);
+box.innerHTML=`<div class="nd-card pad">
+  <div class="mono" style="font-size:12px;color:var(--accent)">${d.code}</div>
+  <h2 style="font-size:15px;margin:2px 0 10px">${esc(d.nome)}</h2>
+  <div class="tools">${stChip(d.status)}${clChip(d.classe)}${d.seriado?'<span class="nd-chip violet">SÉRIE</span>':''}</div>
+  <p style="font-size:12.5px;color:var(--t2)">${esc(d.objetivo)}</p>
+  ${relGroup('Alimenta','var(--accent)',r.alimenta)}${relGroup('Deriva de','var(--cyan)',r.deriva)}${relGroup('Referencia','var(--t3)',r.ref)}
+</div>`;
+box.querySelectorAll('.rrow').forEach(b=>b.onclick=()=>{st.sel=b.dataset.c;renderLanes();renderMDetail()});
+}
+
+/* ===================== ENTRADA (wizard) ===================== */
+const FORM={
+ ata:[['titulo','Título / pauta da reunião','input'],['data','Data','date'],['local','Local','input'],['participantes','Participantes (um por linha)','textarea'],['pauta','Pauta','textarea'],['deliberacoes','Deliberações e encaminhamentos','textarea']],
+ declaracao:[['titulo','Título da declaração','input'],['data','Data','date'],['destinatario','Nome do declarado / destinatário','input'],['corpo','Texto da declaração','textarea']],
+ relatorio:[['titulo','Título do relatório','input'],['data','Data','date'],['periodo','Período coberto','input'],['resumo','Resumo executivo','textarea'],['atividades','Atividades realizadas','textarea'],['proximos','Próximos passos','textarea']],
+ texto:[['titulo','Título','input'],['data','Data','date'],['corpo','Conteúdo','textarea']]};
+function renderEntrada(){
+const g=GRUPOS[st.role];
+const serPNs=DOCS.filter(d=>d.seriado);
+const d=byCode[st.w.pn];
+const kind=d?(KIND[d.code]||'texto'):null;
+const escopos=d?(d.escopo_serie==='PROJETO'?PROJ.map(p=>[p.id,p.nome+' (projeto)']):SECTORS.map(s=>[s,SET[s].nome+' (depto)'])):[];
+const num=d&&st.w.escopo?nextNum(d.code,st.w.escopo):null;
+const sn=num?`${d.code}-${st.w.escopo}-${pad3(num)}`:null;
+$('#view').innerHTML=`<div class="cols"><div>
+  <h1 class="nd-h1">Nova entrada de série</h1>
+  <p class="nd-sub">Dá entrada numa nova edição de documento seriado: o sistema gera o <b>SN</b>, você preenche o conteúdo
+  sem se preocupar com formatação, e o documento sai em PDF no papel timbrado padrão.</p>
+  ${g.submeter?'':`<div class="nd-card pad" style="border-color:#713f12;margin-bottom:14px;color:var(--warn);font-size:12.5px">O grupo ${esc(g.nome)} não pode dar entrada em documentos. Troque a sessão para Membro ou superior.</div>`}
+  <div class="nd-card pad">
+    <div class="wstep"><div class="whead"><span class="wnum">1</span><span class="nd-micro">Tipo de documento (PN)</span></div>
+      <select class="nd-select" id="wpn" ${g.submeter?'':'disabled'}>
+        <option value="">Selecione…</option>
+        ${serPNs.map(p=>`<option value="${p.code}" ${st.w.pn===p.code?'selected':''}>${p.code} — ${esc(p.nome)}</option>`).join('')}
+      </select>
+      ${d?`<p style="font-size:11.5px;color:var(--t3);margin:6px 0 0">${esc(d.objetivo)} Escopo da série: <b>${esc(d.escopo_serie||'—')}</b>.</p>`:''}
+    </div>
+    ${d?`<div class="wstep"><div class="whead"><span class="wnum">2</span><span class="nd-micro">Vincular a ${d.escopo_serie==='PROJETO'?'um projeto':'um departamento'}</span></div>
+      <select class="nd-select" id="wesc">
+        <option value="">Selecione…</option>
+        ${escopos.map(([id,n])=>`<option value="${id}" ${st.w.escopo===id?'selected':''}>${esc(n)}</option>`).join('')}
+      </select></div>`:''}
+    ${sn?`<div class="wstep"><div class="whead"><span class="wnum">3</span><span class="nd-micro">Serial number gerado</span></div>
+      <div class="snpreview">${sn}</div>
+      <p style="font-size:11px;color:var(--t3)">${pad3(num)} = ${num}ª edição de ${d.code} no escopo ${esc(escopoNome(st.w.escopo))}.</p></div>
+    <div class="wstep"><div class="whead"><span class="wnum">4</span><span class="nd-micro">Conteúdo</span></div>
+      ${FORM[kind].map(([k,lbl,t])=>`<div class="nd-field"><label class="nd-micro">${lbl}</label>
+        ${t==='textarea'?`<textarea class="nd-textarea" data-k="${k}">${esc(st.w.campos[k]||'')}</textarea>`
+        :`<input class="nd-input" type="${t==='date'?'date':'text'}" data-k="${k}" value="${esc(st.w.campos[k]||'')}">`}</div>`).join('')}
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="nd-btn primary" id="wpdf">${ic('print',14)} Gerar PDF</button>
+        <button class="nd-btn" id="wreg">${ic('copy',14)} Copiar linha de registro (aba Séries)</button>
+      </div>
+      <p style="font-size:11px;color:var(--t3);margin-top:10px">O PDF é gerado pelo navegador (Imprimir → Salvar como PDF) já no padrão visual.
+      Depois: 1) salve o PDF com o nome <span class="mono">${sn}</span>; 2) suba-o na pasta do setor via Pull Request;
+      3) cole a linha de registro na aba <b>Séries</b> da planilha de metadados — o catálogo atualiza no merge.</p>
+    </div>`:''}
+  </div>
+</div>
+<aside class="sticky"><div class="nd-micro" style="margin-bottom:8px">Pré-visualização</div><div id="paper"></div></aside></div>`;
+$('#wpn')&&($('#wpn').onchange=e=>{st.w.pn=e.target.value;st.w.escopo='';st.w.campos={};renderEntrada()});
+$('#wesc')&&($('#wesc').onchange=e=>{st.w.escopo=e.target.value;renderEntrada()});
+document.querySelectorAll('[data-k]').forEach(el=>el.oninput=()=>{st.w.campos[el.dataset.k]=el.value;paint(sn,kind,d)});
+const bp=$('#wpdf');if(bp)bp.onclick=()=>{document.getElementById('printRoot').innerHTML=$('#paper').innerHTML;print()};
+const br=$('#wreg');if(br)br.onclick=()=>{
+  const c=st.w.campos;const today=new Date().toLocaleDateString('pt-BR');
+  const line=[sn,d.code,st.w.escopo,num,c.titulo||'',c.data?c.data.split('-').reverse().join('/'):today,'','RASCUNHO','',''].join('\t');
+  navigator.clipboard.writeText(line).then(()=>{br.textContent='Copiado ✓';setTimeout(()=>renderEntrada(),1200)});};
+paint(sn,kind,d);
+}
+function paint(sn,kind,d){
+const box=$('#paper');if(!box)return;
+if(!sn){box.innerHTML=`<div class="nd-card pad" style="text-align:center;color:var(--t3);padding:40px 20px">${ic('file',26)}<p style="font-size:12.5px">Complete os passos 1 e 2 para pré-visualizar.</p></div>`;return}
+const c=st.w.campos,today=new Date().toLocaleDateString('pt-BR');
+const dt=c.data?c.data.split('-').reverse().join('/'):today;
+const block=(t,v)=>v?`<h3>${t}</h3><p>${esc(v)}</p>`:'';
+let body='';
+if(kind==='ata')body=block('Local',c.local)+block('Participantes',c.participantes)+block('Pauta',c.pauta)+block('Deliberações e encaminhamentos',c.deliberacoes);
+else if(kind==='declaracao')body=(c.destinatario?`<p><b>Declarado:</b> ${esc(c.destinatario)}</p>`:'')+block('Declaração',c.corpo);
+else if(kind==='relatorio')body=block('Período',c.periodo)+block('Resumo executivo',c.resumo)+block('Atividades realizadas',c.atividades)+block('Próximos passos',c.proximos);
+else body=block('Conteúdo',c.corpo);
+box.innerHTML=`<div class="paper">
+  <div class="phead">
+    <img class="plogo" src="assets/imagotipo-preto.png" alt="NeuroDynamics">
+    <div class="pcode"><b>${esc(deptOf(st.w.escopo))}</b><br>${esc(c.titulo||d.nome)}<br>${sn} Rev. A</div></div>
+  <h2>${esc(c.titulo||'(sem título)')}</h2>
+  <div class="pmeta">${esc(escopoNome(st.w.escopo))} · ${dt} · Edição Nº ${pad3(nextNum(d.code,st.w.escopo))}</div>
+  ${body||'<p style="color:#888">(preencha o conteúdo…)</p>'}
+  <div class="sig"><div>Autor</div><div>Aprovador</div></div>
+  <div class="pfoot"><span>${sn}</span><span>Gerado em ${today} · NeuroDynamics DOCS</span></div>
+</div>`;
+}
+
+/* ===================== MANUTENÇÃO ===================== */
+function renderManut(){
+const semArq=DOCS.filter(d=>d.status!=='INEXISTENTE'&&!d.template_url);
+const inex=DOCS.filter(d=>d.status==='INEXISTENTE');
+const rasc=DOCS.filter(d=>d.status==='RASCUNHO');
+const semObj=DOCS.filter(d=>!d.objetivo);
+const conectadosSet=new Set();REL.forEach(e=>{conectadosSet.add(e.de);conectadosSet.add(e.para)});
+const isolados=DOCS.filter(d=>!conectadosSet.has(d.code));
+const snSemArq=INST.filter(i=>!i.arquivo);
+const card=(n,l,cls)=>`<div class="nd-card mcard"><div class="num" style="color:${cls}">${n}</div><div class="lbl">${l}</div></div>`;
+const lista=(t,items,fmt)=>items.length?`<div class="nd-card" style="margin-bottom:14px"><div style="padding:10px 14px;border-bottom:1px solid var(--line)" class="nd-micro">${t} (${items.length})</div>
+  <table class="nd-table">${items.map(fmt).join('')}</table></div>`:'';
+$('#view').innerHTML=`<h1 class="nd-h1">Manutenção do acervo</h1>
+<p class="nd-sub">Verificações automáticas de integridade sobre o catálogo. Cada pendência aponta a ação na planilha de controle/metadados ou no repositório.</p>
+<div class="mgrid">
+  ${card(semArq.length,'PN sem arquivo vinculado','var(--warn)')}
+  ${card(inex.length,'PN a criar (INEXISTENTE)','var(--t2)')}
+  ${card(rasc.length,'Rascunhos em aberto','var(--warn)')}
+  ${card(isolados.length,'PN sem relações no mapa','var(--cyan)')}
+</div>
+${lista('PN sem arquivo vinculado — colar link na coluna TEMPLATE',semArq,d=>`<tr><td class="mono" style="width:120px">${d.code}</td><td>${esc(d.nome)}</td><td style="width:120px">${stChip(d.status)}</td></tr>`)}
+${lista('Edições (SN) sem arquivo — subir PDF e colar link na aba Séries',snSemArq,i=>`<tr><td class="mono" style="width:200px;color:var(--cyan)">${i.sn}</td><td>${esc(i.titulo)}</td><td style="width:120px">${stChip(i.status)}</td></tr>`)}
+${lista('Documentos a criar',inex,d=>`<tr><td class="mono" style="width:120px">${d.code}</td><td>${esc(d.nome)}</td><td style="width:140px">${clChip(d.classe)}</td></tr>`)}
+${lista('Rascunhos aguardando conclusão',rasc,d=>`<tr><td class="mono" style="width:120px">${d.code}</td><td>${esc(d.nome)}</td></tr>`)}
+${lista('Sem relações registradas (conferir no NRO-PUB-001_metadados → Relações)',isolados,d=>`<tr><td class="mono" style="width:120px">${d.code}</td><td>${esc(d.nome)}</td></tr>`)}
+${semObj.length?'':''}`;
+}
+
+shell();
+})();
+</script>
+</body>
+</html>
