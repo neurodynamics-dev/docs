@@ -13,7 +13,7 @@ Os arquivos e o fluxo de aprovação vivem **neste repositório privado**; um
 │   ├── NRO-PUB-001.xlsx                  matriz de controle (fonte da verdade)
 │   ├── NRO-PUB-001_metadados.xlsx        objetivo / template / relações
 │   └── build_data.py                     gera o catálogo
-├── catalogo/
+├── docs/
 │   ├── index.html                        o site (duas interfaces)
 │   └── data.js                           gerado — não editar à mão
 ├── .github/
@@ -50,10 +50,10 @@ Depois, no GitHub:
 
 ```bash
 pip install openpyxl
-python controle/build_data.py        # regenera catalogo/data.js
+python controle/build_data.py        # regenera docs/data.js
 ```
 
-Prévia local: abra `catalogo/index.html` no navegador (lê `data.js` via `<script>`).
+Prévia local: abra `docs/index.html` no navegador (lê `data.js` via `<script>`).
 
 ## Leia também
 - **FLUXO.md** — ciclo de vida (rascunho → submeter → aprovar → vigente) e proteção de branch.
